@@ -1,2 +1,2 @@
-# dakhund
+# Dakhund
 Wifi deauthantication attack detector.
