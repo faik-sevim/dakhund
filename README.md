@@ -64,6 +64,10 @@ Poc :
 
 The left side attacker with Kali, Right side with ubuntu is the user side in this scenario.  
 
-https://github.com/faik-sevim/dakhund/assets/35146324/eebc32bb-eff6-4a9d-9cfc-c306f03bcb6d
+
+
+https://github.com/faik-sevim/dakhund/assets/35146324/a522e4dc-52cd-4a13-a3eb-0e7219dc3463
+
+
 
 
