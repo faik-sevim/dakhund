@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Packet Sniffer</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    let apiAddress = "";
+
+    let lastApiCallTime = 0;  // API'yi son ziyaret zamanını saklamak için değişken
+
+
+
+    setInterval(function() {
+
+        fetch('/last_deauth_packets')
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                let packetList = document.getElementById('packets-list');
+
+                packetList.innerHTML = '';
+
+                data.last_packets.forEach(packet => {
+
+                    let listItem = document.createElement('li');
+
+                    let currentTime = new Date();
+
+                    let formattedTime = currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds() + " " + currentTime.getDate() + "/" + (currentTime.getMonth()+1) + "/" + currentTime.getFullYear();
+
+                    listItem.textContent = packet + " at " + formattedTime;
+
+                    packetList.appendChild(listItem);
+
+                });
+
+
+
+                let currentTime = new Date().getTime();
+
+                if(data.last_packets.length >= 10 && (currentTime - lastApiCallTime > 600000)) {  // 10 dakika kontrolü
+
+                    fetch(apiAddress);
+
+                    lastApiCallTime = currentTime;  // API ziyareti zamanını güncelle
+
+                }
+
+            });
+
+        }, 5000);
+
+        
+
+        $(document).ready(function() {
+
+            function updateSignalStrength() {
+
+                $.get('/signal_strength', function(data) {
+
+                    $('#signal-strength').text(data.signal_strength + ' dBm');
+
+                });
+
+            }
+
+            setInterval(updateSignalStrength, 1000); // Update every 1000 milliseconds (1 second)
+
+            updateSignalStrength(); // Initial update
+
+        });
+
+        $(document).ready(function() {
+
+            // ... Diğer jQuery Fonksiyonları ...
+
+            $("#api-address-btn").click(function(e) {
+
+                e.preventDefault();
+
+                apiAddress = $("#api-address-input").val();
+
+                $.post('/set_api_address', { 'api_address': apiAddress });
+
+            });
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+    <h1>Packet Sniffer</h1>
+
+    <form method="post">
+
+        <label for="host_mac">Host MAC:</label>
+
+        <input type="text" id="host_mac" name="host_mac" value="{{ host_mac }}">
+
+        <label for="client_mac">Client MAC:</label>
+
+        <input type="text" id="client_mac" name="client_mac" value="{{ client_mac }}">
+
+        <button type="submit">Set MAC Addresses</button>
+
+        <label for="api-address-input">API Address:</label>
+
+        <input type="text" id="api-address-input" placeholder="Enter API Address">
+
+        <button id="api-address-btn" type="button">Set API Address</button>
+
+    </form>
+
+    <h2>WiFi Signal Strength</h2>
+
+    <p>Host ({{ host_mac }}) ---> Client ({{ client_mac }}): <span id="signal-strength">Bekleniyor...</span></p>
+
+    <h2>Last 20 Deauth Packets</h2>
+
+    <ul id="packets-list">
+
+        {% for packet in last_packets %}
+
+            <li>{{ packet }}</li>
+
+        {% endfor %}
+
+    </ul>
+
+</body>
+
+</html>
+
