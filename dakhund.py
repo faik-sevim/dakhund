@@ -20,17 +20,21 @@ def index():
         HOST_MAC = request.form.get('host_mac').lower()
         CLIENT_MAC = request.form.get('client_mac').lower()
     return render_template('index.html', last_packets=LAST_PACKETS, host_mac=HOST_MAC, client_mac=CLIENT_MAC)
+
 @app.route('/signal_strength')
 def signal_strength():
     return jsonify(signal_strength=SIGNAL_STRENGTH)
+
 @app.route('/set_api_address', methods=['POST'])
 def set_api_address():
     global API_ADDRESS
     API_ADDRESS = request.form.get('api_address')
     return jsonify(success=True)
+
 @app.route('/last_deauth_packets')
 def last_deauth_packets():
     return jsonify(last_packets=LAST_PACKETS)
+
 def packet_handler():
     global SIGNAL_STRENGTH
     while True:
@@ -51,12 +55,14 @@ def packet_handler():
             LAST_PACKETS.append(f"{sender} -> {receiver}, Signal: {strength} dBm at {current_time}")
             if len(LAST_PACKETS) > 20:
                 LAST_PACKETS.pop(0)
+
 def sniff_packets():
     sniff(iface=selected_device, prn=lambda x: PACKET_QUEUE.put(x), store=0)
+
 if __name__ == "__main__":
+    selected_device = sys.argv[1] # Move this line to the top
     packet_thread = threading.Thread(target=packet_handler)
     sniff_thread = threading.Thread(target=sniff_packets)
     packet_thread.start()
     sniff_thread.start()
     app.run(port=5000, debug=True, use_reloader=False)
-    selected_device = sys.argv[1]
