@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from scapy.all import *
 import threading
 import queue
+import sys
 
 app = Flask(__name__)
 
@@ -51,10 +52,11 @@ def packet_handler():
             if len(LAST_PACKETS) > 20:
                 LAST_PACKETS.pop(0)
 def sniff_packets():
-    sniff(iface="wlan0mon", prn=lambda x: PACKET_QUEUE.put(x), store=0)
+    sniff(iface=selected_device, prn=lambda x: PACKET_QUEUE.put(x), store=0)
 if __name__ == "__main__":
     packet_thread = threading.Thread(target=packet_handler)
     sniff_thread = threading.Thread(target=sniff_packets)
     packet_thread.start()
     sniff_thread.start()
     app.run(port=5000, debug=True, use_reloader=False)
+    selected_device = sys.argv[1]
