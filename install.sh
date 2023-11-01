@@ -44,4 +44,4 @@ echo "✅ WLAN device switched to monitor mode successfully!"
 
 # Step 4: Launch the Program
 echo "🚀 Launching the program..."
-python3 [your_program_name].py
+python3 dakhund.py
