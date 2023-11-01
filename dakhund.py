@@ -4,7 +4,7 @@ import threading
 import queue
 import sys
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 
 PACKET_QUEUE = queue.Queue()
 SIGNAL_STRENGTH = -100
