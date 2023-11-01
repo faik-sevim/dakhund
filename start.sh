@@ -67,4 +67,4 @@ echo "✅ $selected_device switched to monitor mode successfully!"
 
 # Step 4: Launch the Program
 echo "🚀 Launching the program..."
-python3 dakhund.py
+python3 dakhund.py $selected_device
