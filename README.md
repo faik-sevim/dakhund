@@ -3,7 +3,7 @@ Wifi de-authentication attack detector.
 
     git clone https://github.com/faik-sevim/dakhund.git
     cd dakhund
-    chmod +x install.sh
+    chmod +x start.sh
     ./start.sh
 
 
